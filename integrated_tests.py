@@ -25,7 +25,7 @@ class DataAccessLayer:
     metadata = MetaData()
 
     EXAMPLE_TABLE = Table(
-        "MODEL_INPUT_CONVERSIONS",
+        "EXAMPLE_TABLE",
         metadata,
         Column(),
         schema="",
@@ -80,3 +80,70 @@ class DataAccessLayer:
         for file in data_dir.iterdir():
             table = getattr(self, file.stem)
             self.connection.execute(Delete(table))
+            
+class TestInput(TestCase):
+    dal = DataAccessLayer()
+
+    @classmethod
+    def setUpClass(cls):
+        cls.dal.db_init("test")
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.dal.db_destroy()
+
+    def tearDown(self):
+        self.dal.db_clean("test_simple")
+
+    def setUp(self):
+        self.dal.db_populate("test_simple")
+
+        
+@click.command()
+@click.option(
+    "-c",
+    "--config_file",
+    required=True,
+    type=click.File(),
+    help="File path to configuration.",
+)
+def main():
+    ENGINE = create_db_engine(config["credentials"])
+    with ENGINE.begin() as conn:
+        ...
+
+# Add parent directory to python path
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+import run
+
+@patch(".io.get_model_parameters")
+@patch(".io.get_data")
+@patch(".io.create_db_engine")
+def test_run_no_valid_data(self, create_engine, get_data, get_model_parameters):
+    """ Test results are not generated when all markets have insufficient non-zero data. """
+    create_engine.return_value = self.dal.engine
+    
+    runner = CliRunner()
+    runner.invoke(
+        run.main,
+        ['-vvv', '-c', '--file', './tests/test_config.json'],
+        catch_exceptions=False
+    )
+    with self.dal.engine.begin() as conn:
+        results = .io.get_results(conn)
+        
+  from unittest import TestCase
+from unittest.mock import patch, MagicMock
+
+from click.testing import CliRunner
+
+def save_parameters(_, params, **kwargs):
+    nonlocal learned_model_parameters
+
+    #LOGGER.warning("The following Model Parameters were attempted to be saved:\n %s", params)
+    learned_model_parameters = params
+    store_parameters.side_effect = save_parameters
+    
+create_db_engine.begin.return_value.__enter__.return_value = None
