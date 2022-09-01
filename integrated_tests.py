@@ -147,3 +147,47 @@ def save_parameters(_, params, **kwargs):
     store_parameters.side_effect = save_parameters
     
 create_db_engine.begin.return_value.__enter__.return_value = None
+
+
+    market_config = Table(
+        "",
+        MetaData(),
+        schema="ssd",
+        autoload_with=conn,
+    )
+    model_parameters = conn.execute(select(market_config)).fetchall()
+    
+    
+def import_string(dotted_path:str) -> object:
+    """Import a dotted module path.
+
+    Params
+    ------
+    dotted_path: str
+        Path to find the module
+
+    Returns
+    -------
+    The attribute/class designated by the last name in the path.
+
+    Raises
+    ------
+    ImportError
+        If the import failed/path is invalid
+    """
+    try:
+        module_path, class_name = dotted_path.rsplit(".", 1)
+    except ValueError:
+        msg = "%s doesn't look like a module path" % dotted_path
+        six.reraise(ImportError, ImportError(msg), sys.exc_info()[2])
+
+    module = import_module(module_path)
+
+    try:
+        return getattr(module, class_name)
+    except AttributeError:
+        msg = 'Module "%s" does not define a "%s" attribute/class' % (
+            module_path,
+            class_name,
+        )
+        six.reraise(ImportError, ImportError(msg), sys.exc_info()[2])
