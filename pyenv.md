@@ -14,16 +14,63 @@ To know required OS dependencies: https://github.com/pyenv/pyenv/wiki#suggested-
 then can install pyenv
 curl https://pyenv.run | bash
 
+# MAC Installation of pyenv
+brew update
+brew install pyenv
+## Setup shell environment for pyenv
+Define environment variable PYENV_ROOT to point to the path where Pyenv will store its data. $HOME/.pyenv is the default. 
+Add the pyenv executable to your PATH if it's not already there
+run eval "$(pyenv init -)" to install pyenv into your shell as a shell function, enable shims and autocompletion
+### Bash setup
+Stock bash setup varies between distributions
+the most reliable way to get Pyenv in all environments is to append Pyenv configuration commands to both .bashrc
+
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+
+Then, if you have ~/.profile, ~/.bash_profile or ~/.bash_login, add the commands there as well. If you have none of these, add them to ~/.profile.
+
+to add to ~/.profile:
+
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.profile
+echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.profile
+echo 'eval "$(pyenv init -)"' >> ~/.profile
+
+to add to ~/.bash_profile:
+
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile
+echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
+echo 'eval "$(pyenv init -)"' >> ~/.bash_profile
+
+### -zsh Setup
+Found on MAC
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
+echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
+echo 'eval "$(pyenv init -)"' >> ~/.zshrc
+
+## Restart shell
+So path changes take effect
+exec "$SHELL"
+
+## Install python build dependencies
+xcode-select --install
+brew install openssl readline sqlite3 xz zlib tcl-tk
+
 # See all available python installations.
 pyenv install --list
+pyenv install -l
+
 # Install some python versions.
 pyenv install  3.7.5
+
 # See all python installations that you have installed.
 pyenv versions
 
 pyenv allows to manage python versions at global/local level
 # Set the default/global from one of the python versions.
 pyenv global 3.8.0
+
 # In the current directory, set the python version. This creates the file .python-version.
 pyenv local 2.7.17
 
@@ -50,3 +97,5 @@ pyenv virtualenv 3.6.8 .bayesian-venv --> create virtual enviro
 # pyenv shell should activate pythonversion for terminal , but doesn't always work
 [pth] = pyenv which python # after setting python version
 poetry env use [pth]
+  
+brew upgrade pyenv
