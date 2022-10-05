@@ -15,6 +15,8 @@ then can install pyenv
 curl https://pyenv.run | bash
 
 # MAC Installation of pyenv
+Install brew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 brew update
 brew install pyenv
 ## Setup shell environment for pyenv
@@ -55,7 +57,7 @@ exec "$SHELL"
 
 ## Install python build dependencies
 xcode-select --install
-brew install openssl readline sqlite3 xz zlib tcl-tk
+goba
 
 # See all available python installations.
 pyenv install --list
